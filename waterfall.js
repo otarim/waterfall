@@ -95,7 +95,7 @@
 		this.__lock = this.sid = this.page = 0;
 		this.__lockCount = this.pageNum;
 		this.data = [];
-		this.duration = config.duration || 20;
+		this.duration = config.duration || 0;
 		this.tpl = config.template();
 		this.maxPage = config.maxPage;
 		this.maxNum = config.maxNum;
@@ -174,8 +174,9 @@
 				clearTimeout(timmer);
 				timmer = setTimeout(function(){
 					var sTop = d.body.scrollTop + d.documentElement.scrollTop,
-						viewHeight = d.documentElement.clientHeight || w.offsetHeight;
-					if(sTop + viewHeight > Waterfall.__max(self.columnHeight).value + duration){
+						viewHeight = w.innerHeight || d.documentElement.clientHeight,
+						scrollHeight = d.documentElement.scrollHeight || d.body.scrollHeight;
+					if(sTop + viewHeight >= scrollHeight - duration){
 						if(!self.__lock){
 							self.__lock = 1;
 							self.mainProcess()
