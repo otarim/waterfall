@@ -208,6 +208,7 @@
 2. 140304修复了部分事件的触发时机
 3. 140314修复了firefox报下naturalWidth以及naturalHeight无法为setter的错误
 4. 140314修复了一个可能引起onDone无法触发的bug
+5. 140530修复了ie下滚动触发的问题
 
 	
 ###demo:
