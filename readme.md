@@ -97,6 +97,10 @@
 
 	瀑布流的列数,默认值为4
 	
+**columnHeight**
+
+	瀑布流的默认高度，默认值[0,0,0,0],可选
+	
 **colWidth**
 
 	瀑布流的列宽,无默认值,必须
@@ -209,6 +213,7 @@
 3. 140314修复了firefox报下naturalWidth以及naturalHeight无法为setter的错误
 4. 140314修复了一个可能引起onDone无法触发的bug
 5. 140530修复了ie下滚动触发的问题
+6. 140626增加了参数columnHeight
 
 	
 ###demo:

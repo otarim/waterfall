@@ -86,7 +86,7 @@
 		this.gutterWidth = config.gutterWidth || 20;
 		this.gutterHeight = config.gutterHeight || 20;
 		this.colNum = config.colNum || 4;
-		this.columnHeight = new Array(this.colNum+1).join(0).split('').map(function(){return 0}) || new Array(5).join(0).split('').map(function(){return 0});
+		this.columnHeight = config.columnHeight || new Array(this.colNum+1).join(0).split('').map(function(){return 0}) || [0,0,0,0];
 		this.pageNum = config.pageNum || 15;
 		this.fetch = config.fetch;
 		this.fetchBtn = config.fetchBtn;
@@ -228,19 +228,14 @@
 			Waterfall.__calcImgSize(this,this.procssConfig)
 		},
 		procssConfig: function(img){
-			var top,left,height;
+			var top,left,height,minHeight;
 			// 缓存图片原始宽高
 			img.naturalwidth = img.naturalWidth ? img.naturalWidth : img.width;
 			img.naturalheight = img.naturalHeight ? img.naturalHeight : img.height;
 			height = this.flexWidth * img.height / img.width;
-			// 如果第一批的话,直接append无需判断
-			if(this.sid < this.colNum){
-				top = 0;
-				left = this.sid * (this.colWidth + this.gutterWidth)
-			}else{
-				top = Waterfall.__min(this.columnHeight).value;
-				left = Waterfall.__min(this.columnHeight).index * (this.colWidth + this.gutterWidth)
-			}
+			minHeight = Waterfall.__min(this.columnHeight);
+			top = minHeight.value;
+			left = minHeight.index * (this.colWidth + this.gutterWidth);
 			this.replaceTpl({
 				top: top,
 				left: left,
