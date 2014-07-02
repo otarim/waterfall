@@ -1,4 +1,5 @@
 // waterfall.js by otarim
+// todo: shake in ie8 
 ;(function(w,d,undefined){
 	// Polyfill
 	var proto = Array.prototype,
@@ -44,6 +45,15 @@
             return ret;
         };
     }
+    if(![].fill){
+    	proto.fill = function(num){
+    		var ret = [];
+    		for(var i = 0;i < this.length;i++){
+    			ret.push(num);
+    		}
+    		return ret;
+    	}
+    }
     if(d.getElementsByClassName){
     	getElementsByClassName = function(dom,className){
     		return dom.getElementsByClassName(className)
@@ -86,11 +96,12 @@
 		this.gutterWidth = config.gutterWidth || 20;
 		this.gutterHeight = config.gutterHeight || 20;
 		this.colNum = config.colNum || 4;
-		this.columnHeight = config.columnHeight || new Array(this.colNum+1).join(0).split('').map(function(){return 0}) || [0,0,0,0];
+		this.specialCol = config.columnHeight && config.columnHeight.slice();
+		this.columnHeight = config.columnHeight || new Array(this.colNum || 4).fill(0);
+		this.resize = config.resize;
 		this.pageNum = config.pageNum || 15;
 		this.fetch = config.fetch;
 		this.fetchBtn = config.fetchBtn;
-		this.resize = config.resize;
 		this.fadeOut = config.fadeOut;
 		this.__lock = this.sid = this.page = 0;
 		this.__lockCount = this.pageNum;
@@ -107,6 +118,7 @@
 		this.eventStatus = true;
 		this.__imgQueue = [];
 		this.__animateQueue = [];
+		this.todo = [];//已经存在的 dom
 		this.initialize();
 	}
 	// Waterfall方法
@@ -119,6 +131,7 @@
 				this.bindDefaultFetchEvent();
 			}
 			if(this.resize){
+				this.prepareResize(false);
 				this.bindResizeEvent()
 			}
 			this.__lock = 1;
@@ -149,7 +162,7 @@
 						// 空数据的情况,重置参数
 						if(self.fetchBtn){self.fetchBtn.style.display = self.fetchBtn._display}
 						self.__lock = 0;
-						self.onDone && self.onDone();
+						self.onDone && self.onDone.call(self);
 					}
 				})
 			}else{
@@ -187,6 +200,48 @@
 			Waterfall.__addEvent(w,'scroll',this.fnHandler);
 		},
 		bindResizeEvent: function(){
+			var self = this,timmer;
+			var resizeFn = function(){
+				clearTimeout(timmer);
+				timmer = setTimeout(function(){
+					self.prepareResize(true);
+				},200)
+			}
+			Waterfall.__addEvent(w,'resize',resizeFn);
+		},
+		prepareResize: function(Manual){
+			var pinWidth = this.colWidth + this.gutterWidth;
+			var clientWidth = w.innerWidth || d.documentElement.clientWidth,
+				colNum = parseInt(clientWidth / pinWidth,10);
+				this.colWrap.style.cssText += ';width: ' + pinWidth * colNum + 'px;';
+			if(colNum === this.colNum) return;
+			var self = this;
+			if(this.specialCol){
+				if(colNum < this.colNum || colNum < this.specialCol.length){
+					this.columnHeight = this.specialCol.slice().splice(0,colNum);
+				}else{
+					this.columnHeight = this.specialCol.slice().concat(new Array(colNum - this.specialCol.length).fill(0));
+				}
+			}else{
+				this.columnHeight = new Array(colNum).fill(0);
+			}
+			Manual && this.doResize();
+			this.colNum = colNum;
+		},
+		doResize: function(){
+			var self = this;
+			var appendResize = function(dom){
+				var minHeight = Waterfall.__min(self.columnHeight);
+				var top = minHeight.value;
+				var left = minHeight.index * (self.colWidth + self.gutterWidth);
+				dom.el.style.cssText += ';top: '+ top + 'px;left: ' + left + 'px;';
+				// 更新 columnHeight
+				self.columnHeight[Waterfall.__min(self.columnHeight).index] += dom.layout;
+				self.colwrapStyle.cssText += 'height: ' + Waterfall.__max(self.columnHeight).value + 'px';
+			}
+			this.todo.forEach(function(dom){
+				appendResize(dom);
+			})
 		},
 		makeImgQueue: function(data){
 			var self = this;
@@ -202,7 +257,7 @@
 						if(self.fetchBtn){self.fetchBtn.style.display = self.fetchBtn._display}
 						self.__lock = 0;
 						self.page++;
-						self.onDone && self.onDone();
+						self.onDone && self.onDone.call(self);
 					}
 				}
 				// 处理图片加载失败的情况,加载失败后,直接从队列中删除
@@ -218,7 +273,7 @@
 						if(self.fetchBtn){self.fetchBtn.style.display = self.fetchBtn._display}
 						self.__lock = 0;
 						self.page++;
-						self.onDone && self.onDone();
+						self.onDone && self.onDone.call(self);
 					}
 				}
 				img.src = d;
@@ -270,7 +325,12 @@
 			this.colWrap.appendChild(tmpDom);
 			this.onPrepend && this.onPrepend.call(this,tmpDom);
 			// 更新当前高度
-			this.columnHeight[Waterfall.__min(this.columnHeight).index] += tmpDom.offsetHeight + this.gutterHeight;
+			var layout = tmpDom.offsetHeight + this.gutterHeight;
+			this.columnHeight[Waterfall.__min(this.columnHeight).index] += layout;
+			this.todo.push({
+				el: tmpDom,
+				layout: layout
+			})
 			this.colwrapStyle.cssText += 'height: ' + Waterfall.__max(this.columnHeight).value + 'px';
 		},
 		animation: function(dom){
@@ -302,7 +362,7 @@
 		}
 	})
 	// Waterfall私有属性
-	Waterfall.__version = '2.0';
+	Waterfall.__version = '3.0';
 	Waterfall.__calcImgSize = function(model,callback){
 		// 必须让宽高检查不阻塞其他图片的宽高检查
 		// 所以宽高检查的应该是同时的

@@ -7,14 +7,14 @@
 			return begin + Math.floor((end - begin) * Math.random())
 		}
 		//colClass,imgClass,colWidth,flexWidth这四个属性必须跟html以及css中的定义对应上
-		//其实也可以做出自动匹配,但是考虑到性能,还是放弃了,还有那个resize的操作,用户很少会去resize窗体的..
-		//当然后期可以加上,以解决部分dt的需求
 		var wt = new Waterfall({
 			colWrap: document.getElementById('water'),
 			colClass: 'sp',
 			colPrefix: 'balabala',
 			imgClass: 'sp-m',
 			colNum: 4,
+			columnHeight: [200,10,30,50],
+			resize: true,
 			colWidth: 222,
 			flexWidth: 200,
 			duration: 50,
@@ -101,6 +101,10 @@
 
 	瀑布流的默认高度，默认值[0,0,0,0],可选
 	
+**resize**
+
+	是否根据窗体自适应瀑布流，可选，默认 false
+	
 **colWidth**
 
 	瀑布流的列宽,无默认值,必须
@@ -149,6 +153,10 @@
 
 	fetch方法获取的数据
 	
+*todo*
+
+	所有瀑布元素的集合
+	
 *__imgQueue*(debug)
 
 	待处理的队列
@@ -159,9 +167,7 @@
 	
 *__lock*(debug)
 
-	当前请求数据请求锁状态
-	
-	
+	当前请求数据请求锁状态	
 	
 ####方法
 ====
@@ -214,6 +220,7 @@
 4. 140314修复了一个可能引起onDone无法触发的bug
 5. 140530修复了ie下滚动触发的问题
 6. 140626增加了参数columnHeight
+7. 140702增加了参数resize,用于根据窗体宽度自适应瀑布流（需要动画的话，可以在瀑布元素上面加 css 的 transition 属性，低级浏览器放弃过渡动画）
 
 	
 ###demo:

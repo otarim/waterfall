@@ -6,8 +6,8 @@
 	<style>
 	* {margin: 0;padding: 0;}
 	/*html {pointer-events: none;}*/
-	#water {position: relative;width: 1000px;margin: 20px auto 50px;zoom: 1}
-	.sp {position: absolute;box-shadow: 0 0 3px rgba(0,0,0,.5);overflow: hidden;width: 220px;border: 1px solid #bebebe;}
+	#water {position: relative;margin: 20px auto 50px;zoom: 1}
+	.sp {position: absolute;box-shadow: 0 0 3px rgba(0,0,0,.5);overflow: hidden;width: 220px;border: 1px solid #bebebe;-webkit-transition: all linear .5s;-moz-transition: all linear .5s;-ms-transition: all linear .5s;-o-transition: all linear .5s;transition: all linear .5s;background: #fff;}
 	.sp:hover {box-shadow: 0 0 5px rgba(0,0,0,.8)}
 	.sp-m {margin: 10px;border: 1px solid rgba(0,0,0,.2)}
 	.sp-cm {overflow: hidden;zoom: 1;margin: 0 10px 10px;}
@@ -61,13 +61,14 @@
 		<!-- <div id="fetch">more</div> -->
 	</div>
 </body>
-<script src="http://code.jquery.com/jquery-1.11.0.js"></script>
+<script _src="http://code.jquery.com/jquery-1.11.0.js"></script>
 <script src="waterfall.js"></script>
 <script>
 var data = [];
+var colNum = 4;
 for(var i = 0;i<32;i++){
 	data.push({
-		src: 'http://placekitten.com/' + randomNum(640,891) + '/' + randomNum(640,891),
+		src: 'http://placekitten.com/' + randomNum(250,300) + '/' + randomNum(250,300),
 		author: 'otarim',
 		time: new Date().toTimeString(),
 		sumary: Date()
@@ -78,7 +79,7 @@ for(var i = 0;i<32;i++){
 	}
 	//colClass,imgClass,colWidth,flexWidth这四个属性必须跟html以及css中的定义对应上
 	//其实也可以做出自动匹配,但是考虑到性能,还是放弃了,还有那个resize的操作,用户很少会去resize窗体的..
-	//当然后期可以加上,以解决部分dt的需求
+	//当然后期可以加上,以解决部分dt的需求,(已加上...)
 		var wt = new Waterfall({
 			colWrap: document.getElementById('water'),
 			colClass: 'sp',
@@ -89,6 +90,7 @@ for(var i = 0;i<32;i++){
 			colWidth: 222,
 			flexWidth: 200,
 			// duration: 50,
+			resize: true,
 			pageNum: 10,
 			gutterWidth: 23,
 			gutterHeight: 23,
@@ -131,6 +133,7 @@ for(var i = 0;i<32;i++){
 				}
 			},
 			onDone: function(){
+				// this.resize(3);
 				try{
 					document.getElementById('r-ga').classList.toggle('r-ga');
 				}catch(e){
