@@ -96,7 +96,9 @@
 		this.gutterWidth = config.gutterWidth || 20;
 		this.gutterHeight = config.gutterHeight || 20;
 		this.colNum = config.colNum || 4;
+		this.maxColNum = config.maxColNum;
 		this.specialCol = config.columnHeight && config.columnHeight.slice();
+		this.specialColHeight = config.specialColHeight || 0;
 		this.columnHeight = config.columnHeight || new Array(this.colNum || 4).fill(0);
 		this.resize = config.resize;
 		this.pageNum = config.pageNum || 15;
@@ -211,16 +213,19 @@
 		},
 		prepareResize: function(Manual){
 			var pinWidth = this.colWidth + this.gutterWidth;
-			var clientWidth = w.innerWidth || d.documentElement.clientWidth,
-				colNum = parseInt(clientWidth / pinWidth,10);
-				this.colWrap.style.cssText += ';width: ' + pinWidth * colNum + 'px;';
+			var clientWidth = w.innerWidth || d.documentElement.clientWidth;
+			var colNum = parseInt(clientWidth / pinWidth,10);
 			if(colNum === this.colNum) return;
+			// 超过最大列数，设置为最大列数
+			if(this.maxColNum && colNum > this.maxColNum) {colNum = this.maxColNum}
+			var wrapWidth = pinWidth * colNum;
+			this.colWrap.style.cssText += ';width: ' + wrapWidth + 'px;';
 			var self = this;
 			if(this.specialCol){
 				if(colNum < this.specialCol.length){
 					this.columnHeight = this.specialCol.slice().splice(0,colNum);
 				}else{
-					this.columnHeight = this.specialCol.slice().concat(new Array(colNum - this.specialCol.length).fill(0));
+					this.columnHeight = this.specialCol.slice().concat(new Array(colNum - this.specialCol.length).fill(this.specialColHeight));
 				}
 			}else{
 				this.columnHeight = new Array(colNum).fill(0);

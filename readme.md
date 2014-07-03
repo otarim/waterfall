@@ -14,7 +14,9 @@
 			imgClass: 'sp-m',
 			colNum: 4,
 			columnHeight: [200,10,30,50],
+			specialColHeight: 50,
 			resize: true,
+			maxColNum: 6,			
 			colWidth: 222,
 			flexWidth: 200,
 			duration: 50,
@@ -100,6 +102,14 @@
 **columnHeight**
 
 	瀑布流的默认高度，默认值[0,0,0,0],可选
+	
+**specialColHeight**
+
+	特殊列的初始化高度，无默认值，可选
+	
+**maxColNum**
+
+	瀑布流的最大列数，无默认值，可选
 	
 **resize**
 
@@ -221,6 +231,7 @@
 5. 140530修复了ie下滚动触发的问题
 6. 140626增加了参数columnHeight
 7. 140702增加了参数resize,用于根据窗体宽度自适应瀑布流（需要动画的话，可以在瀑布元素上面加 css 的 transition 属性，低级浏览器放弃过渡动画）
+8. 140703增加了特殊列初始化高度参数 specialColHeight 以及最大列数 maxColNum
 
 	
 ###demo:
