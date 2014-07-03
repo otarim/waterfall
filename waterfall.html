@@ -7,7 +7,7 @@
 	* {margin: 0;padding: 0;}
 	/*html {pointer-events: none;}*/
 	#water {position: relative;margin: 20px auto 50px;zoom: 1}
-	.sp {position: absolute;box-shadow: 0 0 3px rgba(0,0,0,.5);overflow: hidden;width: 220px;border: 1px solid #bebebe;-webkit-transition: all linear .5s;-moz-transition: all linear .5s;-ms-transition: all linear .5s;-o-transition: all linear .5s;transition: all linear .5s;background: #fff;}
+	.sp {position: absolute;box-shadow: 0 0 3px rgba(0,0,0,.5);overflow: hidden;width: 220px;border: 1px solid #bebebe;background: #fff;}
 	.sp:hover {box-shadow: 0 0 5px rgba(0,0,0,.8)}
 	.sp-m {margin: 10px;border: 1px solid rgba(0,0,0,.2)}
 	.sp-cm {overflow: hidden;zoom: 1;margin: 0 10px 10px;}
@@ -16,7 +16,7 @@
 	.sp-cm strong {font-weight: bold;color: #333;}
 	#fetch {background: -webkit-linear-gradient(top,rgb(250,250,250),rgb(245,245,245));box-shadow: 0 0 3px rgba(0,0,0,.5);text-align: center;line-height: 25px;position: absolute;bottom: -25px;cursor: pointer;*zoom: 1;width: 998px;border: 1px solid #bebebe;}
 	/*这里只是做了css3的animate效果...其实也可以做opacity的,但是fade效果确实没啥必要其实*/
-	.fade {
+/*	.fade {
 		-webkit-animation: fade .5s linear;
 		-moz-animation: fade .5s linear;
 		animation: fade .5s linear;
@@ -32,7 +32,7 @@
 	@keyframes fade {
 		0% {opacity: 0}
 		100% {opacity: 1}
-	}
+	}*/
 	.r-ga {
         height: 20px;
         width: 5%;
@@ -68,7 +68,7 @@ var data = [];
 var colNum = 4;
 for(var i = 0;i<32;i++){
 	data.push({
-		src: 'http://placekitten.com/' + randomNum(250,300) + '/' + randomNum(250,300),
+		src: 'http://placekitten.com/' + randomNum(250,300) + '/' + randomNum(300,350),
 		author: 'otarim',
 		time: new Date().toTimeString(),
 		sumary: Date()
@@ -85,8 +85,8 @@ for(var i = 0;i<32;i++){
 			colClass: 'sp',
 			colPrefix: 'balabala',
 			imgClass: 'sp-m',
-			colNum: 4,
-			columnHeight: [200,10,30,50],
+			colNum: 6,
+			columnHeight: [200,10,30,50,0,0],
 			colWidth: 222,
 			flexWidth: 200,
 			// duration: 50,
@@ -95,7 +95,7 @@ for(var i = 0;i<32;i++){
 			gutterWidth: 23,
 			gutterHeight: 23,
 			// fetchBtn: document.getElementById('fetch'),//不定义的话就是滚动加载了
-			fadeOut: true,
+			animate: true, //开启动画
 			maxPage: 20,//不定义的话就没有数量限制
 			maxNum: 500,//不定义的话就没有数量限制
 			fetch: function(callback){

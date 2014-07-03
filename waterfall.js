@@ -1,5 +1,5 @@
 // waterfall.js by otarim
-// todo: shake in ie8 
+// todo: 不足1屏的滚动问题
 ;(function(w,d,undefined){
 	// Polyfill
 	var proto = Array.prototype,
@@ -102,7 +102,7 @@
 		this.pageNum = config.pageNum || 15;
 		this.fetch = config.fetch;
 		this.fetchBtn = config.fetchBtn;
-		this.fadeOut = config.fadeOut;
+		this.animate = config.animate;
 		this.__lock = this.sid = this.page = 0;
 		this.__lockCount = this.pageNum;
 		this.data = [];
@@ -217,7 +217,7 @@
 			if(colNum === this.colNum) return;
 			var self = this;
 			if(this.specialCol){
-				if(colNum < this.colNum || colNum < this.specialCol.length){
+				if(colNum < this.specialCol.length){
 					this.columnHeight = this.specialCol.slice().splice(0,colNum);
 				}else{
 					this.columnHeight = this.specialCol.slice().concat(new Array(colNum - this.specialCol.length).fill(0));
@@ -237,7 +237,7 @@
 				dom.el.style.cssText += ';top: '+ top + 'px;left: ' + left + 'px;';
 				// 更新 columnHeight
 				self.columnHeight[Waterfall.__min(self.columnHeight).index] += dom.layout;
-				self.colwrapStyle.cssText += 'height: ' + Waterfall.__max(self.columnHeight).value + 'px';
+				self.colwrapStyle.cssText += ';height: ' + Waterfall.__max(self.columnHeight).value + 'px';
 			}
 			this.todo.forEach(function(dom){
 				appendResize(dom);
@@ -280,7 +280,7 @@
 				img.sid = index;
 				self.__imgQueue.push(img);
 			})
-			Waterfall.__calcImgSize(this,this.procssConfig)
+			Waterfall.__calcImgSize(this,this.procssConfig);
 		},
 		procssConfig: function(img){
 			var top,left,height,minHeight;
@@ -299,6 +299,7 @@
 				sidIndex: img.sid
 			})
 			this.sid++;
+
 		},
 		replaceTpl: function(config){
 			// 根据sid匹配data的数据在进行replace操作
@@ -315,15 +316,15 @@
 			}catch(e){
 				tmpDom['data-id'] = this.colPrefix + config.sid;
 			}
-			tmpDom.style.cssText += 'top: ' + config.top + 'px;' + 'left: ' + config.left + 'px;';
+			tmpDom.style.cssText += ';top: ' + config.top + 'px;' + 'left: ' + config.left + 'px;';
 			img = getElementsByClassName(tmpDom,this.imgClass)[0];
 			img.width = this.flexWidth;
 			img.height = config.height;
-			// 动画的处理,将动画推入队列,然后所有元素都append之后再执行队列中的淡出操作,默认的,元素透明度为0
-			// 因为插入队列的时候已经做了一次透明度处理
-			this.fadeOut && this.animation(tmpDom);
-			this.colWrap.appendChild(tmpDom);
+			this.animate && this.resize && Waterfall.__supportCSS3 && (tmpDom.style.cssText += ';-webkit-transition: all linear .5s;-moz-transition: all linear .5s;-ms-transition: all linear .5s;-o-transition: all linear .5s;transition: all linear .5s;')
+			// todo: .cssText = 'filter...' ie获取offsetHeight有一定几率返回0
+			this.animate && (img.style.filter = 'alpha(opacity=0)',img.style.cssText += ';opacity: 0;-webkit-transition: opacity linear .5s;-moz-transition: opacity linear .5s;-ms-transition: opacity linear .5s;-o-transition: opacity linear .5s;transition: opacity linear .5s;')
 			this.onPrepend && this.onPrepend.call(this,tmpDom);
+			this.colWrap.appendChild(tmpDom);
 			// 更新当前高度
 			var layout = tmpDom.offsetHeight + this.gutterHeight;
 			this.columnHeight[Waterfall.__min(this.columnHeight).index] += layout;
@@ -331,15 +332,15 @@
 				el: tmpDom,
 				layout: layout
 			})
-			this.colwrapStyle.cssText += 'height: ' + Waterfall.__max(this.columnHeight).value + 'px';
+			this.colwrapStyle.cssText += ';height: ' + Waterfall.__max(this.columnHeight).value + 'px';
+			this.animate && this.animation(img);
 		},
 		animation: function(dom){
 			if(Waterfall.__supportCSS3){
-				dom.classList.add('fade')
+				dom.style.cssText += 'opacity: 1';
 			}else{
 				// 推入animate队列进行处理,轮询队列做透明度处理,处理结束的从队列中删除
 				this.__animateQueue.push(dom);
-				Waterfall.__handleOpacity(this);
 			}
 		},
 		// 开关滚动事件
@@ -385,11 +386,14 @@
 							img.end = true;
 							// model.__animateQueueLength++;
 							callback.call(model,img)
+
 						}
 					}
 				}
 			}else{
 				clearInterval(timmer)
+				// 全部任务完成，执行animate
+				Waterfall.__handleOpacity(model);
 			}
 		},interval)
 	}
