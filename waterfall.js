@@ -97,6 +97,7 @@
 		this.gutterHeight = config.gutterHeight || 20;
 		this.colNum = config.colNum || 4;
 		this.maxColNum = config.maxColNum;
+		this.minColNum = config.minColNum;
 		this.specialCol = config.columnHeight && config.columnHeight.slice();
 		this.specialColHeight = config.specialColHeight || 0;
 		this.columnHeight = config.columnHeight || new Array(this.colNum || 4).fill(0);
@@ -218,6 +219,7 @@
 			if(colNum === this.colNum) return;
 			// 超过最大列数，设置为最大列数
 			if(this.maxColNum && colNum > this.maxColNum) {colNum = this.maxColNum}
+			if(this.minColNum && colNum < this.minColNum) {colNum = this.minColNum}
 			var wrapWidth = pinWidth * colNum;
 			this.colWrap.style.cssText += ';width: ' + wrapWidth + 'px;';
 			var self = this;
