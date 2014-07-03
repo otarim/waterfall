@@ -22,7 +22,7 @@
 			gutterWidth: 23,
 			gutterHeight: 23,
 			fetchBtn: document.getElementById('fetch'),//不定义的话就是滚动加载了
-			fadeOut: true,
+			animate: true,
 			maxPage: 2,//不定义的话就没有数量限制
 			maxNum: 500,//不定义的话就没有数量限制
 			fetch: function(callback){
@@ -129,9 +129,9 @@
 
 	如果指定了,那么瀑布加载方式为点击加载,默认滚动加载
 	
-**fadeOut**
+**animate**
 
-	是否淡出显示,默认不淡出
+	是否开启动画效果，默认关闭
 	
 **maxPage**
 
