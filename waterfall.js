@@ -1,6 +1,5 @@
 // waterfall.js by otarim
 // todo: 不足1屏的滚动问题
-// todo: specialCol 自定义（resize）
 ;
 (function(w, d, undefined) {
 	// Polyfill
@@ -111,6 +110,7 @@
 			this.specialColHeight = config.specialColHeight || 0;
 			this.columnHeight = config.columnHeight || new Array(this.colNum || 4).fill(0);
 			this.resize = config.resize;
+			this.onResize = config.onResize;
 			this.pageNum = config.pageNum || 15;
 			this.fetch = config.fetch;
 			this.fetchBtn = config.fetchBtn;
@@ -248,6 +248,7 @@
 			} else {
 				this.columnHeight = new Array(colNum).fill(0);
 			}
+			this.onResize && this.onResize.call(this, colNum);
 			Manual && this.doResize();
 			this.colNum = colNum;
 		},

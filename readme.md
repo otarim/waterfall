@@ -55,6 +55,11 @@
 			onPrepend: function(dom){
 				// $(dom).fadeOut();
 			},
+			onResize: function(num){
+				if(num === 3){
+					this.columnHeight = [200,20,20];
+				}
+			},
 			onprocess: function(){
 				// 这里如果要做加载滚动的效果可以在这里定义
 				try{
@@ -203,6 +208,11 @@
 
 	每次插入瀑布执行的函数
 	dom: 指向当前插入的瀑布
+
+**onResize(colNum)**
+
+	每次调整窗体的时候触发的回调函数
+	colNum: 当前的列数（调整后）
 	
 **onprocess()**
 
@@ -237,6 +247,7 @@
 6. 140626增加了参数columnHeight
 7. 140702增加了参数resize,用于根据窗体宽度自适应瀑布流（需要动画的话，可以在瀑布元素上面加 css 的 transition 属性，低级浏览器放弃过渡动画）
 8. 140703增加了特殊列初始化高度参数 specialColHeight 以及最大列数 maxColNum,最小列数 minColNum
+9. 140704增加了 onResize 函数
 
 	
 ###demo:

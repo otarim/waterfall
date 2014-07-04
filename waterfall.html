@@ -125,6 +125,11 @@ for(var i = 0;i<32;i++){
 				// 记得return模板变量~
 				return tpl;
 			},
+			onResize: function(num){
+				if(num === 3){
+					this.columnHeight = [200,20,20];
+				}
+			},
 			onPrepend: function(dom){
 				// $(dom).fadeOut();
 			},
