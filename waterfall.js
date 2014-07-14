@@ -183,13 +183,16 @@
 				this.switchEvent(false);
 			}
 		},
+		fetchData: function() {
+			if (!this.__lock) {
+				this.__lock = 1;
+				this.mainProcess();
+			}
+		},
 		bindFetchEvent: function() {
 			var self = this;
-			this.fetchBtn.onclick = function() {
-				if (!self.__lock) {
-					self.__lock = 1;
-					self.mainProcess()
-				}
+			this.fetchBtn.onclick = function(){
+				self.fetchData();
 			}
 		},
 		bindDefaultFetchEvent: function() {
@@ -204,10 +207,7 @@
 						viewHeight = w.innerHeight || d.documentElement.clientHeight,
 						scrollHeight = d.documentElement.scrollHeight || d.body.scrollHeight;
 					if (sTop + viewHeight >= scrollHeight - distance) {
-						if (!self.__lock) {
-							self.__lock = 1;
-							self.mainProcess()
-						}
+						self.fetchData();
 					}
 				}, 200)
 			}

@@ -15,24 +15,6 @@
 	.sp-cm p {overflow: hidden;zoom: 1;color: #777;font-size: 12px;line-height: 16px;}
 	.sp-cm strong {font-weight: bold;color: #333;}
 	#fetch {background: -webkit-linear-gradient(top,rgb(250,250,250),rgb(245,245,245));box-shadow: 0 0 3px rgba(0,0,0,.5);text-align: center;line-height: 25px;position: absolute;bottom: -25px;cursor: pointer;*zoom: 1;width: 998px;border: 1px solid #bebebe;}
-	/*这里只是做了css3的animate效果...其实也可以做opacity的,但是fade效果确实没啥必要其实*/
-/*	.fade {
-		-webkit-animation: fade .5s linear;
-		-moz-animation: fade .5s linear;
-		animation: fade .5s linear;
-	}
-	@-webkit-keyframes fade {
-		0% {opacity: 0}
-		100% {opacity: 1}
-	}
-	@-moz-keyframes fade {
-		0% {opacity: 0}
-		100% {opacity: 1}
-	}
-	@keyframes fade {
-		0% {opacity: 0}
-		100% {opacity: 1}
-	}*/
 	.r-ga {
         height: 20px;
         width: 5%;
@@ -58,7 +40,7 @@
 <body>
 	<div id="r-ga"></div>
 	<div id="water">
-		<!-- <div id="fetch">more</div> -->
+		<div id="fetch">more</div>
 	</div>
 </body>
 <script _src="http://code.jquery.com/jquery-1.11.0.js"></script>
@@ -66,7 +48,7 @@
 <script>
 var data = [];
 var colNum = 4;
-for(var i = 0;i<32;i++){
+for(var i = 0;i<320;i++){
 	data.push({
 		src: 'http://placekitten.com/' + randomNum(250,300) + '/' + randomNum(300,350),
 		author: 'otarim',
@@ -78,8 +60,6 @@ for(var i = 0;i<32;i++){
 		return begin + Math.floor((end - begin) * Math.random())
 	}
 	//colClass,imgClass,colWidth,flexWidth这四个属性必须跟html以及css中的定义对应上
-	//其实也可以做出自动匹配,但是考虑到性能,还是放弃了,还有那个resize的操作,用户很少会去resize窗体的..
-	//当然后期可以加上,以解决部分dt的需求,(已加上...)
 		var wt = new Waterfall({
 			colWrap: document.getElementById('water'),
 			colClass: 'sp',
@@ -89,7 +69,7 @@ for(var i = 0;i<32;i++){
 			columnHeight: [200,10,10,10],
 			colWidth: 222,
 			flexWidth: 200,
-			// distance: 50,
+			distance: 2000,
 			resize: true,
 			maxColNum: 5,
 			minColNum: 3,
