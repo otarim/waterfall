@@ -118,7 +118,7 @@
 			this.__lock = this.sid = this.page = 0;
 			this.__lockCount = this.pageNum;
 			this.data = [];
-			this.duration = config.duration || 0;
+			this.distance = config.distance || 0;
 			this.tpl = config.template();
 			this.maxPage = config.maxPage;
 			this.maxNum = config.maxNum;
@@ -194,7 +194,7 @@
 		},
 		bindDefaultFetchEvent: function() {
 			var self = this,
-				duration = this.duration,
+				distance = this.distance,
 				timmer;
 			// scrollÊÂ¼þ°ó¶¨
 			this.fnHandler = function() {
@@ -203,7 +203,7 @@
 					var sTop = d.body.scrollTop + d.documentElement.scrollTop,
 						viewHeight = w.innerHeight || d.documentElement.clientHeight,
 						scrollHeight = d.documentElement.scrollHeight || d.body.scrollHeight;
-					if (sTop + viewHeight >= scrollHeight - duration) {
+					if (sTop + viewHeight >= scrollHeight - distance) {
 						if (!self.__lock) {
 							self.__lock = 1;
 							self.mainProcess()

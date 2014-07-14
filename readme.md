@@ -20,7 +20,7 @@
 			minColNum: 3,			
 			colWidth: 222,
 			flexWidth: 200,
-			duration: 50,
+			distance: 50,
 			pageNum: 15,
 			gutterWidth: 23,
 			gutterHeight: 23,
@@ -133,9 +133,9 @@
 
 	瀑布流中图片的宽度,无默认值,必须
 	
-**duration**
+**distance**
 
-	用于滚动加载的位移值,超过此位移则触发瀑布流加载动作,默认值为20
+	用于滚动加载的位移值,超过此位移则触发瀑布流加载动作,默认值为0
 	
 **pageNum**
 
