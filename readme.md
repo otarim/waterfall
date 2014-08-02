@@ -28,6 +28,11 @@
 			animate: true,
 			maxPage: 2,//不定义的话就没有数量限制
 			maxNum: 500,//不定义的话就没有数量限制
+			//hasLayout: true,
+			//customProperty: {
+				//width: 'sample_width',
+				//height: 'sample_height'
+			//},
 			fetch: function(callback){
 				var data = [];
 				for(var i = 0;i<this.pageNum;i++){
@@ -161,6 +166,14 @@
 
 	最大的瀑布数,超过此数量则不再加载,无默认值
 	
+**hasLayout**
+
+	接口是否存在 layout 字段，需要配合 customProperty 使用，默认为 false
+	
+**customProperty**
+
+	自定义的 layout 字段，依赖 hasLayout 属性
+	
 *sid*
 
 	当前所有瀑布的数量
@@ -254,6 +267,8 @@
 8. 140703增加了特殊列初始化高度参数 specialColHeight 以及最大列数 maxColNum,最小列数 minColNum
 9. 140704增加了 onResize 方法
 10. 140714增加了 fetchData 方法
+11. 140802增加了对于自带图片尺寸接口的支持，如果返回接口存在图片尺寸字段，那么就不调用预获取尺寸的方法，直接布局渲染。
+12. 140802修复图片原始尺寸属性无效的问题。
 
 	
 ###demo:

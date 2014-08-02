@@ -61,12 +61,14 @@
 		}
 	} else {
 		getElementsByClassName = function(dom, className) {
+			dom = dom || document;
 			var ret = [],
-				nodelists = dom.getElementsByTagName('*');
+				nodelists = dom.getElementsByTagName('*'),
+				reg = new RegExp('(^|\\s)' + className + '(\\s|$)');
 			for (var i = 0, l = nodelists.length, node; i < l; i++) {
 				node = nodelists[i];
-				if (node.className === className) {
-					ret.push(node)
+				if (reg.test(node.className)) {
+					ret.push(node);
 				}
 			}
 			nodelists = undefined;
@@ -92,7 +94,6 @@
 			};
 		})();
 	}
-	var Waterfall_conflict = w.Waterfall;
 	var Waterfall = function(config) {
 			this.colPrefix = config.colPrefix || +new Date() + 'seed';
 			this.colWrap = config.colWrap;
@@ -131,6 +132,8 @@
 			this.__imgQueue = [];
 			this.__animateQueue = [];
 			this.todo = []; //已经存在的 dom
+			this.hasLayout = config.hasLayout || false;
+			this.customProperty = config.customProperty || {};
 			this.initialize();
 		}
 		// Waterfall方法
@@ -168,15 +171,19 @@
 							return obj[key];
 						})
 						self.makeImgQueue(imgs);
+						if (self.hasLayout) {
+							data.forEach(function(el, index) {
+								el.sid = index;
+								self.procssConfig(el);
+							})
+							Waterfall.__handleOpacity(self);
+							self.resetStauts();
+						}
 					} else {
 						// 重置lockcount
 						self.__lockCount = self.pageNum;
 						// 空数据的情况,重置参数
-						if (self.fetchBtn) {
-							self.fetchBtn.style.display = self.fetchBtn._display
-						}
-						self.__lock = 0;
-						self.onDone && self.onDone.call(self);
+						self.resetStauts();
 					}
 				})
 			} else {
@@ -191,7 +198,7 @@
 		},
 		bindFetchEvent: function() {
 			var self = this;
-			this.fetchBtn.onclick = function(){
+			this.fetchBtn.onclick = function() {
 				self.fetchData();
 			}
 		},
@@ -276,15 +283,6 @@
 					if (self.imgDone) {
 						self.imgDone.call(self, img)
 					}
-					// 检查当前批次的所有的任务,如果所有任务都完成,触发onDone
-					if (self.__lock && !self.__lockCount) {
-						if (self.fetchBtn) {
-							self.fetchBtn.style.display = self.fetchBtn._display
-						}
-						self.__lock = 0;
-						self.page++;
-						self.onDone && self.onDone.call(self);
-					}
 				}
 				// 处理图片加载失败的情况,加载失败后,直接从队列中删除
 				// 防止setInterval继续检测队列中的错误图片
@@ -294,42 +292,47 @@
 					if (self.imgError) {
 						self.imgError.call(self, err)
 					}
-					// 检查当前批次的所有的任务,如果所有任务都完成,触发onDone
-					if (self.__lock && !self.__lockCount) {
-						if (self.fetchBtn) {
-							self.fetchBtn.style.display = self.fetchBtn._display
-						}
-						self.__lock = 0;
-						self.page++;
-						self.onDone && self.onDone.call(self);
-					}
 				}
 				img.src = d;
 				img.sid = index;
 				self.__imgQueue.push(img);
 			})
-			Waterfall.__calcImgSize(this, this.procssConfig);
+			if (!this.hasLayout) {
+				Waterfall.__calcImgSize(this, this.procssConfig);
+			}
 		},
 		procssConfig: function(img) {
-			var top, left, height, minHeight;
-			// 缓存图片原始宽高
-			img.naturalwidth = img.naturalWidth ? img.naturalWidth : img.width;
-			img.naturalheight = img.naturalHeight ? img.naturalHeight : img.height;
-			height = this.flexWidth * img.height / img.width;
+			var self = this,
+				top, left, width, height, minHeight, extra;
+			if (this.hasLayout) {
+				width = this.customProperty['width'];
+				height = this.customProperty['height'];
+				extra = {
+					naturalwidth: img[width],
+					naturalheight: img[height]
+				}
+			} else {
+				width = 'width';
+				height = 'height';
+				// 缓存图片原始宽高
+				extra = {
+					naturalwidth: img.naturalWidth ? img.naturalWidth : img.width,
+					naturalheight: img.naturalHeight ? img.naturalHeight : img.height
+				}
+			}
 			minHeight = Waterfall.__min(this.columnHeight);
 			top = minHeight.value;
 			left = minHeight.index * (this.colWidth + this.gutterWidth);
 			this.replaceTpl({
 				top: top,
 				left: left,
-				height: height,
+				height: self.flexWidth * img[height] / img[width],
 				sid: this.sid,
 				sidIndex: img.sid
-			})
+			}, extra)
 			this.sid++;
-
 		},
-		replaceTpl: function(config) {
+		replaceTpl: function(config, extra) {
 			// 根据sid匹配data的数据在进行replace操作
 			var data = this.data[config.sidIndex],
 				tmpDom = d.createElement('div'),
@@ -349,6 +352,13 @@
 			img = getElementsByClassName(tmpDom, this.imgClass)[0];
 			img.width = this.flexWidth;
 			img.height = config.height;
+			if (extra) {
+				for (var i in extra) {
+					if (extra.hasOwnProperty(i)) {
+						img[i] = extra[i];
+					}
+				}
+			}
 			this.animate && this.resize && Waterfall.__supportCSS3 && (tmpDom.style.cssText += ';-webkit-transition: all linear .5s;-moz-transition: all linear .5s;-ms-transition: all linear .5s;-o-transition: all linear .5s;transition: all linear .5s;')
 			// todo: .cssText = 'filter...' ie获取offsetHeight有一定几率返回0
 			this.animate && (img.style.filter = 'alpha(opacity=0)', img.style.cssText += ';opacity: 0;-webkit-transition: opacity linear .5s;-moz-transition: opacity linear .5s;-ms-transition: opacity linear .5s;-o-transition: opacity linear .5s;transition: opacity linear .5s;')
@@ -389,6 +399,17 @@
 				}
 				this.eventStatus = false;
 			}
+		},
+		resetStauts: function() {
+			// 检查当前批次的所有的任务,如果所有任务都完成,触发onDone
+			// if (self.__lock && !self.__lockCount) {
+			if (this.fetchBtn) {
+				this.fetchBtn.style.display = this.fetchBtn._display
+			}
+			this.__lock = 0;
+			this.page++;
+			this.onDone && this.onDone.call(self);
+			// }
 		}
 	})
 	// Waterfall私有属性
@@ -399,6 +420,7 @@
 		// 建立一个队列
 		// 循环队列所有的图片
 		var interval = Waterfall.__isMobile ? 200 : 20;
+		var todos = model.__imgQueue.slice();
 		var timmer = setInterval(function() {
 			var queue = model.__imgQueue,
 				queueLen = queue.length;
@@ -414,7 +436,7 @@
 						if (img.width || img.height) {
 							img.end = true;
 							// model.__animateQueueLength++;
-							callback.call(model, img)
+							// callback.call(model, img)
 
 						}
 					}
@@ -422,7 +444,11 @@
 			} else {
 				clearInterval(timmer)
 				// 全部任务完成，执行animate
+				for (var i = 0; i < todos.length; i++) {
+					callback.call(model, todos[i]);
+				}
 				Waterfall.__handleOpacity(model);
+				model.resetStauts();
 			}
 		}, interval)
 	}
@@ -494,10 +520,6 @@
 			value: value,
 			index: arr.indexOf(value)
 		}
-	}
-	Waterfall.noConflict = function() {
-		w.Waterfall = Waterfall_conflict;
-		return Waterfall_conflict;
 	}
 	w.Waterfall = Waterfall;
 })(window, document)

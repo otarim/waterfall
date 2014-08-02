@@ -43,14 +43,13 @@
 		<!-- <div id="fetch">more</div> -->
 	</div>
 </body>
-<script _src="http://code.jquery.com/jquery-1.11.0.js"></script>
 <script src="waterfall.js"></script>
 <script>
 var data = [];
 var colNum = 4;
 for(var i = 0;i<320;i++){
 	data.push({
-		src: 'http://placekitten.com/' + randomNum(250,300) + '/' + randomNum(300,350),
+		src: 'http://placekitten.com/' + randomNum(1500,1300) + '/' + randomNum(1800,1350),
 		author: 'otarim',
 		time: new Date().toTimeString(),
 		sumary: Date()
@@ -74,14 +73,25 @@ for(var i = 0;i<320;i++){
 			maxColNum: 5,
 			minColNum: 3,
 			specialColHeight: 10,
-			pageNum: 10,
+			pageNum: 20,
 			gutterWidth: 23,
 			gutterHeight: 23,
 			// fetchBtn: document.getElementById('fetch'),//不定义的话就是滚动加载了
 			animate: true, //开启动画
 			maxPage: 20,//不定义的话就没有数量限制
 			maxNum: 500,//不定义的话就没有数量限制
+			hasLayout: true,
+			customProperty: {
+				width: 'sample_width',
+				height: 'sample_height'
+			},
 			fetch: function(callback){
+				var xhr = new XMLHttpRequest();
+				xhr.open('get','https://yande.re/post.json',null);
+				xhr.onload = function(){
+					callback(JSON.parse(this.responseText),'preview_url');
+				}
+				xhr.send(null);
 				// var data = [];
 				// for(var i = 0;i<this.pageNum;i++){
 				// 	data.push({
@@ -92,11 +102,11 @@ for(var i = 0;i<320;i++){
 				// 	})
 				// }
 				// 如果这里是ajax的话,必须把callback调用放到xhr.onload中或者jq的ajax.onsuccess中执行
-				callback(data.splice(0,10),'src');
+				// callback(data.splice(0,10),'src');
 			},
 			template: function(){
 				// 模板中的占位符对应json格式中对象的各个属性
-				var tpl = '<img src="{{src}}" alt="" class="sp-m">'+
+				var tpl = '<img src="{{preview_url}}" alt="" class="sp-m">'+
 				'<div class="sp-cm">'+
 					'<img src="http://placekitten.com/28/28" alt="" class="sp-cm-avt">'+
 					'<p><strong>{{author}}</strong>下午{{time}}:</p>'+
@@ -128,6 +138,7 @@ for(var i = 0;i<320;i++){
 				}
 			},
 			imgDone: function(img){
+				console.log(img.sid);
 			},
 			imgError: function(err){
 				try {
