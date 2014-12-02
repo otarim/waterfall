@@ -104,13 +104,13 @@ for(var i = 0;i<320;i++){
 				// 如果这里是ajax的话,必须把callback调用放到xhr.onload中或者jq的ajax.onsuccess中执行
 				// callback(data.splice(0,10),'src');
 			},
-			template: function(){
+			template: function(data){
 				// 模板中的占位符对应json格式中对象的各个属性
-				var tpl = '<img src="{{preview_url}}" alt="" class="sp-m">'+
+				var tpl = '<img src="'+data.preview_url+'" alt="" class="sp-m">'+
 				'<div class="sp-cm">'+
 					'<img src="http://placekitten.com/28/28" alt="" class="sp-cm-avt">'+
-					'<p><strong>{{author}}</strong>下午{{time}}:</p>'+
-					'<p>{{sumary}}</p>'+
+					'<p><strong>'+data.author+'</strong>下午'+data.time+':</p>'+
+					'<p>'+data.sumary+'</p>'+
 				'</div>';
 				// 记得return模板变量~
 				return tpl;

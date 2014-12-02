@@ -1,93 +1,5 @@
 #瀑布流插件(Waterfall)
 ---
-
-####栗子
-
-        function randomNum(begin,end){
-			return begin + Math.floor((end - begin) * Math.random())
-		}
-		//colClass,imgClass,colWidth,flexWidth这四个属性必须跟html以及css中的定义对应上
-		var wt = new Waterfall({
-			colWrap: document.getElementById('water'),
-			colClass: 'sp',
-			colPrefix: 'balabala',
-			imgClass: 'sp-m',
-			colNum: 4,
-			columnHeight: [200,10,30,50],
-			specialColHeight: 50,
-			resize: true,
-			maxColNum: 6,
-			minColNum: 3,			
-			colWidth: 222,
-			flexWidth: 200,
-			distance: 50,
-			pageNum: 15,
-			gutterWidth: 23,
-			gutterHeight: 23,
-			fetchBtn: document.getElementById('fetch'),//不定义的话就是滚动加载了
-			animate: true,
-			maxPage: 2,//不定义的话就没有数量限制
-			maxNum: 500,//不定义的话就没有数量限制
-			//hasLayout: true,
-			//customProperty: {
-				//width: 'sample_width',
-				//height: 'sample_height'
-			//},
-			fetch: function(callback){
-				var data = [];
-				for(var i = 0;i<this.pageNum;i++){
-					data.push({
-						src: 'http://placekitten.com/' + randomNum(640,891) + '/' + randomNum(640,891),
-						author: 'otarim',
-						time: new Date().toTimeString(),
-						sumary: Date()
-					})
-				}
-				// 如果这里是ajax的话,必须把callback调用放到xhr.onload中或者jq的ajax.onsuccess中执行
-				callback(data,'src');
-			},
-			template: function(){
-				// 模板中的占位符对应json格式中对象的各个属性
-				var tpl = '<img src="{{src}}" alt="" class="sp-m">'+
-				'<div class="sp-cm">'+
-					'<img src="http://placekitten.com/28/28" alt="" class="sp-cm-avt">'+
-					'<p><strong>{{author}}</strong>下午{{time}}:</p>'+
-					'<p>{{sumary}}</p>'+
-				'</div>';
-				// 记得return模板变量~
-				return tpl;
-			},
-			onPrepend: function(dom){
-				// $(dom).fadeOut();
-			},
-			onResize: function(num){
-				if(num === 3){
-					this.columnHeight = [200,20,20];
-				}
-			},
-			onprocess: function(){
-				// 这里如果要做加载滚动的效果可以在这里定义
-				try{
-					document.getElementById('r-ga').classList.toggle('r-ga');
-				}catch(e){
-				}
-			},
-			onDone: function(){
-				try{
-					document.getElementById('r-ga').classList.toggle('r-ga');
-				}catch(e){
-				}
-			},
-			imgDone: function(img){
-			},
-			imgError: function(err){
-				try {
-					console.log(err)
-				} catch (e) {
-
-				}
-			}
-		})
 ####属性
 ===
 **colWrap**
@@ -213,7 +125,7 @@
 			data: 待处理的数据.json
 			key: data中对应的图片路径的键值
 			
-**template**
+**template(data)**
 
 	返回瀑布的模板文件,需要return瀑布的模板变量,必须
 	

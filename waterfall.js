@@ -1,5 +1,5 @@
 // waterfall.js by otarim
-// todo: ²»×ã1ÆÁµÄ¹ö¶¯ÎÊÌâ
+// todo: ä¸è¶³1å±çš„æ»šåŠ¨é—®é¢˜
 ;
 (function(w, d, undefined) {
 	// Polyfill
@@ -120,7 +120,7 @@
 			this.__lockCount = this.pageNum;
 			this.data = [];
 			this.distance = config.distance || 0;
-			this.tpl = config.template();
+			this.tpl = config.template;
 			this.maxPage = config.maxPage;
 			this.maxNum = config.maxNum;
 			this.onPrepend = config.onPrepend;
@@ -131,12 +131,12 @@
 			this.eventStatus = true;
 			this.__imgQueue = [];
 			this.__animateQueue = [];
-			this.todo = []; //ÒÑ¾­´æÔÚµÄ dom
+			this.todo = []; //å·²ç»å­˜åœ¨çš„ dom
 			this.hasLayout = config.hasLayout || false;
 			this.customProperty = config.customProperty || {};
 			this.initialize();
 		}
-		// Waterfall·½·¨
+		// Waterfallæ–¹æ³•
 	Waterfall.prototype = Object.create({
 		initialize: function() {
 			if (this.fetchBtn) {
@@ -160,12 +160,12 @@
 				if (this.fetchBtn) {
 					this.fetchBtn.style.display = 'none'
 				}
-				// Ö´ĞĞonprocessº¯Êı
+				// æ‰§è¡Œonprocesså‡½æ•°
 				this.onprocess && this.onprocess();
 				this.fetch(function(data, key) {
 					self.data = data;
 					if (data.length) {
-						// ÖØÖÃlockcount
+						// é‡ç½®lockcount
 						self.__lockCount = data.length;
 						var imgs = data.map(function(obj) {
 							return obj[key];
@@ -180,9 +180,9 @@
 							self.resetStauts();
 						}
 					} else {
-						// ÖØÖÃlockcount
+						// é‡ç½®lockcount
 						self.__lockCount = self.pageNum;
-						// ¿ÕÊı¾İµÄÇé¿ö,ÖØÖÃ²ÎÊı
+						// ç©ºæ•°æ®çš„æƒ…å†µ,é‡ç½®å‚æ•°
 						self.resetStauts();
 					}
 				})
@@ -206,7 +206,7 @@
 			var self = this,
 				distance = this.distance,
 				timmer;
-			// scrollÊÂ¼ş°ó¶¨
+			// scrolläº‹ä»¶ç»‘å®š
 			this.fnHandler = function() {
 				clearTimeout(timmer);
 				timmer = setTimeout(function() {
@@ -236,7 +236,7 @@
 			var clientWidth = w.innerWidth || d.documentElement.clientWidth;
 			var colNum = parseInt(clientWidth / pinWidth, 10);
 			if (colNum === this.colNum) return;
-			// ³¬¹ı×î´óÁĞÊı£¬ÉèÖÃÎª×î´óÁĞÊı
+			// è¶…è¿‡æœ€å¤§åˆ—æ•°ï¼Œè®¾ç½®ä¸ºæœ€å¤§åˆ—æ•°
 			if (this.maxColNum && colNum > this.maxColNum) {
 				colNum = this.maxColNum
 			}
@@ -266,7 +266,7 @@
 				var top = minHeight.value;
 				var left = minHeight.index * (self.colWidth + self.gutterWidth);
 				dom.el.style.cssText += ';top: ' + top + 'px;left: ' + left + 'px;';
-				// ¸üĞÂ columnHeight
+				// æ›´æ–° columnHeight
 				self.columnHeight[Waterfall.__min(self.columnHeight).index] += dom.layout;
 				self.colwrapStyle.cssText += ';height: ' + Waterfall.__max(self.columnHeight).value + 'px';
 			}
@@ -284,8 +284,8 @@
 						self.imgDone.call(self, img)
 					}
 				}
-				// ´¦ÀíÍ¼Æ¬¼ÓÔØÊ§°ÜµÄÇé¿ö,¼ÓÔØÊ§°Üºó,Ö±½Ó´Ó¶ÓÁĞÖĞÉ¾³ı
-				// ·ÀÖ¹setInterval¼ÌĞø¼ì²â¶ÓÁĞÖĞµÄ´íÎóÍ¼Æ¬
+				// å¤„ç†å›¾ç‰‡åŠ è½½å¤±è´¥çš„æƒ…å†µ,åŠ è½½å¤±è´¥å,ç›´æ¥ä»é˜Ÿåˆ—ä¸­åˆ é™¤
+				// é˜²æ­¢setIntervalç»§ç»­æ£€æµ‹é˜Ÿåˆ—ä¸­çš„é”™è¯¯å›¾ç‰‡
 				img.onerror = function(err) {
 					self.__lockCount--;
 					self.__imgQueue.splice(self.__imgQueue.indexOf(img), 1)
@@ -314,7 +314,7 @@
 			} else {
 				width = 'width';
 				height = 'height';
-				// »º´æÍ¼Æ¬Ô­Ê¼¿í¸ß
+				// ç¼“å­˜å›¾ç‰‡åŸå§‹å®½é«˜
 				extra = {
 					naturalwidth: img.naturalWidth ? img.naturalWidth : img.width,
 					naturalheight: img.naturalHeight ? img.naturalHeight : img.height
@@ -333,14 +333,15 @@
 			this.sid++;
 		},
 		replaceTpl: function(config, extra) {
-			// ¸ù¾İsidÆ¥ÅädataµÄÊı¾İÔÚ½øĞĞreplace²Ù×÷
+			// æ ¹æ®sidåŒ¹é…dataçš„æ•°æ®åœ¨è¿›è¡Œreplaceæ“ä½œ
 			var data = this.data[config.sidIndex],
 				tmpDom = d.createElement('div'),
 				renderResult = '',
 				img;
-			renderResult = this.tpl.replace(/{{([^}]*)}}/g, function(a, b) {
-				return data[b];
-			})
+			// renderResult = this.tpl.replace(/{{([^}]*)}}/g, function(a, b) {
+			// 	return data[b];
+			// })
+			renderResult = this.tpl(data);
 			tmpDom.innerHTML = renderResult;
 			tmpDom.className = this.colClass;
 			try {
@@ -360,11 +361,11 @@
 				}
 			}
 			this.animate && this.resize && Waterfall.__supportCSS3 && (tmpDom.style.cssText += ';-webkit-transition: all linear .5s;-moz-transition: all linear .5s;-ms-transition: all linear .5s;-o-transition: all linear .5s;transition: all linear .5s;')
-			// todo: .cssText = 'filter...' ie»ñÈ¡offsetHeightÓĞÒ»¶¨¼¸ÂÊ·µ»Ø0
+			// todo: .cssText = 'filter...' ieè·å–offsetHeightæœ‰ä¸€å®šå‡ ç‡è¿”å›0
 			this.animate && (img.style.filter = 'alpha(opacity=0)', img.style.cssText += ';opacity: 0;-webkit-transition: opacity linear .5s;-moz-transition: opacity linear .5s;-ms-transition: opacity linear .5s;-o-transition: opacity linear .5s;transition: opacity linear .5s;')
 			this.onPrepend && this.onPrepend.call(this, tmpDom);
 			this.colWrap.appendChild(tmpDom);
-			// ¸üĞÂµ±Ç°¸ß¶È
+			// æ›´æ–°å½“å‰é«˜åº¦
 			var layout = tmpDom.offsetHeight + this.gutterHeight;
 			this.columnHeight[Waterfall.__min(this.columnHeight).index] += layout;
 			this.todo.push({
@@ -378,11 +379,11 @@
 			if (Waterfall.__supportCSS3) {
 				dom.style.cssText += 'opacity: 1';
 			} else {
-				// ÍÆÈëanimate¶ÓÁĞ½øĞĞ´¦Àí,ÂÖÑ¯¶ÓÁĞ×öÍ¸Ã÷¶È´¦Àí,´¦Àí½áÊøµÄ´Ó¶ÓÁĞÖĞÉ¾³ı
+				// æ¨å…¥animateé˜Ÿåˆ—è¿›è¡Œå¤„ç†,è½®è¯¢é˜Ÿåˆ—åšé€æ˜åº¦å¤„ç†,å¤„ç†ç»“æŸçš„ä»é˜Ÿåˆ—ä¸­åˆ é™¤
 				this.__animateQueue.push(dom);
 			}
 		},
-		// ¿ª¹Ø¹ö¶¯ÊÂ¼ş
+		// å¼€å…³æ»šåŠ¨äº‹ä»¶
 		switchEvent: function(value) {
 			if (value === true && !this.eventStatus) {
 				if (this.fetchBtn) {
@@ -401,7 +402,7 @@
 			}
 		},
 		resetStauts: function() {
-			// ¼ì²éµ±Ç°Åú´ÎµÄËùÓĞµÄÈÎÎñ,Èç¹ûËùÓĞÈÎÎñ¶¼Íê³É,´¥·¢onDone
+			// æ£€æŸ¥å½“å‰æ‰¹æ¬¡çš„æ‰€æœ‰çš„ä»»åŠ¡,å¦‚æœæ‰€æœ‰ä»»åŠ¡éƒ½å®Œæˆ,è§¦å‘onDone
 			// if (self.__lock && !self.__lockCount) {
 			if (this.fetchBtn) {
 				this.fetchBtn.style.display = this.fetchBtn._display
@@ -410,26 +411,37 @@
 			this.page++;
 			this.onDone && this.onDone.call(self);
 			// }
+		},
+		reset: function(){
+			if (this.fetchBtn) {
+				this.fetchBtn.style.display = this.fetchBtn._display
+			}
+			this.__lock = this.sid = this.page = 0;
+			this.__imgQueue = [];
+			this.__animateQueue = [];
+			this.todo = []; //å·²ç»å­˜åœ¨çš„ dom
+			this.columnHeight = new Array(this.colNum).fill(0);
+			this.colWrap.innerHTML = '';
 		}
 	})
-	// WaterfallË½ÓĞÊôĞÔ
+	// Waterfallç§æœ‰å±æ€§
 	Waterfall.__version = '3.0';
 	Waterfall.__calcImgSize = function(model, callback) {
-		// ±ØĞëÈÃ¿í¸ß¼ì²é²»×èÈûÆäËûÍ¼Æ¬µÄ¿í¸ß¼ì²é
-		// ËùÒÔ¿í¸ß¼ì²éµÄÓ¦¸ÃÊÇÍ¬Ê±µÄ
-		// ½¨Á¢Ò»¸ö¶ÓÁĞ
-		// Ñ­»·¶ÓÁĞËùÓĞµÄÍ¼Æ¬
+		// å¿…é¡»è®©å®½é«˜æ£€æŸ¥ä¸é˜»å¡å…¶ä»–å›¾ç‰‡çš„å®½é«˜æ£€æŸ¥
+		// æ‰€ä»¥å®½é«˜æ£€æŸ¥çš„åº”è¯¥æ˜¯åŒæ—¶çš„
+		// å»ºç«‹ä¸€ä¸ªé˜Ÿåˆ—
+		// å¾ªç¯é˜Ÿåˆ—æ‰€æœ‰çš„å›¾ç‰‡
 		var interval = Waterfall.__isMobile ? 200 : 20;
 		var todos = model.__imgQueue.slice();
 		var timmer = setInterval(function() {
 			var queue = model.__imgQueue,
 				queueLen = queue.length;
-			// Ñ­»·¼ì²é¶ÓÁĞ
+			// å¾ªç¯æ£€æŸ¥é˜Ÿåˆ—
 			if (queueLen) {
 				for (var i = 0; i < queueLen; i++) {
 					var img = queue[i];
 					if (img.end) {
-						// ÖØÖÃiÎªµ±Ç°Ë÷Òı,²¢ÇÒ²Ã¼ôµ±Ç°µÄlen»º´æ
+						// é‡ç½®iä¸ºå½“å‰ç´¢å¼•,å¹¶ä¸”è£å‰ªå½“å‰çš„lenç¼“å­˜
 						queue.splice(i--, 1);
 						queueLen--;
 					} else {
@@ -443,7 +455,7 @@
 				}
 			} else {
 				clearInterval(timmer)
-				// È«²¿ÈÎÎñÍê³É£¬Ö´ĞĞanimate
+				// å…¨éƒ¨ä»»åŠ¡å®Œæˆï¼Œæ‰§è¡Œanimate
 				for (var i = 0; i < todos.length; i++) {
 					callback.call(model, todos[i]);
 				}
@@ -453,8 +465,8 @@
 		}, interval)
 	}
 	Waterfall.__handleOpacity = function(model) {
-		// ¶ÓÁĞÎª¿ÕµÄÊ±ºò,ÄÇÃ´Çå³ı¼ÆÊıÆ÷,¶¯»­½áÊø
-		// ×¢Òâ....Òì³£Å×³öÊ±....thisÖ¸ÏòÈ«¾Ö...
+		// é˜Ÿåˆ—ä¸ºç©ºçš„æ—¶å€™,é‚£ä¹ˆæ¸…é™¤è®¡æ•°å™¨,åŠ¨ç”»ç»“æŸ
+		// æ³¨æ„....å¼‚å¸¸æŠ›å‡ºæ—¶....thisæŒ‡å‘å…¨å±€...
 		clearTimeout(model.qtimmer);
 		var q = model.__animateQueue;
 		// qlen = q.length;
